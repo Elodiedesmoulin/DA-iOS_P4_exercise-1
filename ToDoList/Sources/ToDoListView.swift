@@ -5,23 +5,26 @@ struct ToDoListView: View {
     @State private var newTodoTitle = ""
     @State private var isShowingAlert = false
     @State private var isAddingTodo = false
-    
+
     // New state for filter index
-    @State private var filterIndex = 0
-    
+    @State private var filterIndex: Status = .all
+
     var body: some View {
         NavigationView {
             VStack {
                 // Filter selector
                 Picker("Filter", selection: $filterIndex) {
-                    Text("All").tag(0)
-                    Text("Done").tag(1)
-                    Text("Not Done").tag(2)
+                    ForEach(Status.allCases, id: \.self) { status in
+                        Text(status.displayName).tag(status)
+                    }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
-                .onChange(of: filterIndex) { index in viewModel.applyFilter(at: index)
+                .onChange(of: filterIndex) { status in
+                    viewModel.filterIndex = status
+                    viewModel.applyFilter()
                 }
+
                 // List of tasks
                 List {
                     ForEach(viewModel.filteredToDoItems) { item in
@@ -47,7 +50,7 @@ struct ToDoListView: View {
                         }
                     }
                 }
-                
+
                 // Sticky bottom view for adding todos
                 if isAddingTodo {
                     HStack {
@@ -55,7 +58,7 @@ struct ToDoListView: View {
                             .padding(.leading)
 
                         Spacer()
-                        
+
                         Button(action: {
                             if newTodoTitle.isEmpty {
                                 isShowingAlert = true
@@ -65,7 +68,7 @@ struct ToDoListView: View {
                                         title: newTodoTitle
                                     )
                                 )
-                                newTodoTitle = "" // Reset newTodoTitle to empty.
+                                newTodoTitle = "" // Reset newTodoTitle to empty
                                 isAddingTodo = false // Close the bottom view after adding
                             }
                         }) {
@@ -80,7 +83,7 @@ struct ToDoListView: View {
                     .shadow(radius: 5)
                     .padding(.horizontal)
                 }
-                
+
                 // Button to toggle the bottom add view
                 Button(action: {
                     isAddingTodo.toggle()
@@ -103,6 +106,17 @@ struct ToDoListView: View {
     }
 }
 
+// Extension to add display names to Status enum
+extension Status {
+    var displayName: String {
+        switch self {
+        case .all: return "All"
+        case .done: return "Done"
+        case .notDone: return "Not Done"
+        }
+    }
+}
+
 struct ToDoListView_Previews: PreviewProvider {
     static var previews: some View {
         ToDoListView(
@@ -112,3 +126,5 @@ struct ToDoListView_Previews: PreviewProvider {
         )
     }
 }
+
+

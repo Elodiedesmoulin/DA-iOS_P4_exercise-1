@@ -1,5 +1,23 @@
 import SwiftUI
 
+enum Status: Int, CaseIterable {
+    case all
+    case done
+    case notDone
+
+    /// Returns the appropriate filter closure based on the status.
+    func filter(_ items: [ToDoItem]) -> [ToDoItem] {
+        switch self {
+        case .done:
+            return items.filter { $0.isDone }
+        case .notDone:
+            return items.filter { !$0.isDone }
+        case .all:
+            return items
+        }
+    }
+}
+
 final class ToDoListViewModel: ObservableObject {
     // MARK: - Private properties
     private let repository: ToDoListRepositoryType
@@ -17,15 +35,19 @@ final class ToDoListViewModel: ObservableObject {
     @Published private var allToDoItems: [ToDoItem] = [] {
         didSet {
             repository.saveToDoItems(allToDoItems)
-            applyFilter(at: filterIndex) // Re-apply the filter when the list changes
+            applyFilter() // Re-apply the filter when the list changes
         }
     }
 
     /// Publisher for the list of filtered to-do items.
-    @Published var filteredToDoItems: [ToDoItem] = []
+    @Published private(set) var filteredToDoItems: [ToDoItem] = []
 
     /// The currently selected filter index.
-    @Published var filterIndex: Int = 0
+    @Published var filterIndex: Status = .all {
+        didSet {
+            applyFilter()
+        }
+    }
 
     // MARK: - Inputs
 
@@ -46,19 +68,13 @@ final class ToDoListViewModel: ObservableObject {
         allToDoItems.removeAll { $0.id == item.id }
     }
 
-    /// Apply the filter to update the list.
-    func applyFilter(at index: Int) {
-        filterIndex = index
-        switch index {
-        case 1:
-            // Show only done items
-            filteredToDoItems = allToDoItems.filter { $0.isDone }
-        case 2:
-            // Show only not done items
-            filteredToDoItems = allToDoItems.filter { !$0.isDone }
-        default:
-            // Show all items
-            filteredToDoItems = allToDoItems
-        }
+    /// Apply the selected filter.
+    func applyFilter() {
+        filteredToDoItems = filterIndex.filter(allToDoItems)
+    }
+
+    // Convenience function to get all possible statuses from Status enum
+    func getAllStatuses() -> [Status] {
+        return Status.allCases
     }
 }

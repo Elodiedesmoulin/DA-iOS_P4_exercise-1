@@ -29,7 +29,7 @@ final class ToDoListViewModelTests: XCTestCase {
     func testAddTodoItem() {
         // Given
         let item = ToDoItem(title: "Test Task")
-        
+        XCTAssertTrue(viewModel.filteredToDoItems.isEmpty)
         // When
         viewModel.add(item: item)
         
@@ -42,7 +42,7 @@ final class ToDoListViewModelTests: XCTestCase {
         // Given
         let item = ToDoItem(title: "Test Task")
         viewModel.add(item: item)
-        
+        XCTAssertFalse(viewModel.filteredToDoItems[0].isDone)
         // When
         viewModel.toggleTodoItemCompletion(item)
         
@@ -53,8 +53,9 @@ final class ToDoListViewModelTests: XCTestCase {
     func testRemoveTodoItem() {
         // Given
         let item = ToDoItem(title: "Test Task")
-        viewModel.filteredToDoItems.append(item)
+        viewModel.add(item: item)
         
+        XCTAssertEqual(viewModel.filteredToDoItems, [item])
         // When
         viewModel.removeTodoItem(item)
         
@@ -63,25 +64,28 @@ final class ToDoListViewModelTests: XCTestCase {
     }
     
     func testFilteredToDoItems() {
-        // Given
-        let item1 = ToDoItem(title: "Task 1", isDone: true)
-        let item2 = ToDoItem(title: "Task 2", isDone: false)
-        viewModel.add(item: item1)
-        viewModel.add(item: item2)
-        
-        // When
-        viewModel.applyFilter(at: 0)
-        // Then
-        XCTAssertEqual(viewModel.filteredToDoItems.count, 2)
-        
-        // When
-        viewModel.applyFilter(at: 1)
-        // Then
-        XCTAssertEqual(viewModel.filteredToDoItems.count, 1)
-        
-        // When
-        viewModel.applyFilter(at: 2)
-        // Then
-        XCTAssertEqual(viewModel.filteredToDoItems.count, 1)
-    }
-}
+           // Given
+           let item1 = ToDoItem(title: "Task 1", isDone: true)
+           let item2 = ToDoItem(title: "Task 2", isDone: false)
+           viewModel.add(item: item1)
+           viewModel.add(item: item2)
+           
+           // When
+           viewModel.filterIndex = .all
+           viewModel.applyFilter()
+           // Then
+           XCTAssertEqual(viewModel.filteredToDoItems, [item1, item2])
+           
+           // When
+           viewModel.filterIndex = .done
+           viewModel.applyFilter()
+           // Then
+           XCTAssertEqual(viewModel.filteredToDoItems, [item1])
+           
+           // When
+           viewModel.filterIndex = .notDone
+           viewModel.applyFilter()
+           // Then
+           XCTAssertEqual(viewModel.filteredToDoItems, [item2])
+       }
+   }
