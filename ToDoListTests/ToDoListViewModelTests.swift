@@ -64,28 +64,41 @@ final class ToDoListViewModelTests: XCTestCase {
     }
     
     func testFilteredToDoItems() {
-           // Given
-           let item1 = ToDoItem(title: "Task 1", isDone: true)
-           let item2 = ToDoItem(title: "Task 2", isDone: false)
-           viewModel.add(item: item1)
-           viewModel.add(item: item2)
-           
-           // When
-           viewModel.filterIndex = .all
-           viewModel.applyFilter()
-           // Then
-           XCTAssertEqual(viewModel.filteredToDoItems, [item1, item2])
-           
-           // When
-           viewModel.filterIndex = .done
-           viewModel.applyFilter()
-           // Then
-           XCTAssertEqual(viewModel.filteredToDoItems, [item1])
-           
-           // When
-           viewModel.filterIndex = .notDone
-           viewModel.applyFilter()
-           // Then
-           XCTAssertEqual(viewModel.filteredToDoItems, [item2])
-       }
-   }
+        // Given
+        let item1 = ToDoItem(title: "Task 1", isDone: true)
+        let item2 = ToDoItem(title: "Task 2", isDone: false)
+        viewModel.add(item: item1)
+        viewModel.add(item: item2)
+        
+        // When
+        viewModel.filterIndex = .all
+        viewModel.applyFilter()
+        // Then
+        XCTAssertEqual(viewModel.filteredToDoItems, [item1, item2])
+        
+        // When
+        viewModel.filterIndex = .done
+        viewModel.applyFilter()
+        // Then
+        XCTAssertEqual(viewModel.filteredToDoItems, [item1])
+        
+        // When
+        viewModel.filterIndex = .notDone
+        viewModel.applyFilter()
+        // Then
+        XCTAssertEqual(viewModel.filteredToDoItems, [item2])
+    }
+
+    func testAddDuplicateTodoItem() {
+        // Given
+        let item1 = ToDoItem(title: "Test Task")
+        let item2 = ToDoItem(title: "Test Task") // same title
+        viewModel.add(item: item1)
+        
+        // When
+        viewModel.add(item: item2)
+        
+        // Then
+        XCTAssertEqual(viewModel.filteredToDoItems.count, 2)
+    }
+}
