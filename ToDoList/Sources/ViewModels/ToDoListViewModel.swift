@@ -1,23 +1,5 @@
 import SwiftUI
 
-enum Status: Int, CaseIterable {
-    case all
-    case done
-    case notDone
-
-    /// Returns the appropriate filter closure based on the status.
-    func filter(_ items: [ToDoItem]) -> [ToDoItem] {
-        switch self {
-        case .done:
-            return items.filter { $0.isDone }
-        case .notDone:
-            return items.filter { !$0.isDone }
-        case .all:
-            return items
-        }
-    }
-}
-
 final class ToDoListViewModel: ObservableObject {
     // MARK: - Private properties
     private let repository: ToDoListRepositoryType
