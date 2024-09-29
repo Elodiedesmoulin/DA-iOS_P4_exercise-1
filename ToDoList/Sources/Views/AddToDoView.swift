@@ -11,14 +11,14 @@ struct AddTodoView: View {
     @Binding var newTodoTitle: String
     @Binding var isShowingAlert: Bool
     let addAction: () -> Void
-
+    
     var body: some View {
         HStack {
             TextField("Enter Task Title", text: $newTodoTitle)
                 .padding(.leading)
-
+            
             Spacer()
-
+            
             Button(action: addAction) {
                 Image(systemName: "plus.circle.fill")
                     .resizable()

@@ -6,7 +6,7 @@ struct ToDoListView: View {
     @State private var isShowingAlert = false
     @State private var isAddingTodo = false
     @State private var filterIndex: Status = .all
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -15,7 +15,7 @@ struct ToDoListView: View {
                         viewModel.filterIndex = status
                         viewModel.applyFilter()
                     }
-
+                
                 // List of tasks
                 List {
                     ForEach(viewModel.filteredToDoItems) { item in
@@ -27,7 +27,7 @@ struct ToDoListView: View {
                         indices.map { viewModel.filteredToDoItems[$0] }.forEach(viewModel.removeTodoItem)
                     }
                 }
-
+                
                 if isAddingTodo {
                     AddTodoView(newTodoTitle: $newTodoTitle, isShowingAlert: $isShowingAlert, addAction: {
                         if !newTodoTitle.isEmpty {
@@ -39,7 +39,7 @@ struct ToDoListView: View {
                         }
                     })
                 }
-
+                
                 AddTaskButtonView(isAddingTodo: $isAddingTodo)
             }
             .navigationBarTitle("To-Do List")

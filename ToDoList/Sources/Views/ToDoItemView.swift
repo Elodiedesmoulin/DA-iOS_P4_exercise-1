@@ -10,7 +10,7 @@ import SwiftUI
 struct TodoItemView: View {
     let item: ToDoItem
     let toggleCompletion: () -> Void
-
+    
     var body: some View {
         HStack {
             Button(action: toggleCompletion) {

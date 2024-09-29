@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddTaskButtonView: View {
     @Binding var isAddingTodo: Bool
-
+    
     var body: some View {
         Button(action: {
             isAddingTodo.toggle()

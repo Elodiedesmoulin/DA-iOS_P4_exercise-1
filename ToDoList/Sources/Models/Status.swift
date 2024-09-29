@@ -11,7 +11,7 @@ enum Status: String, CaseIterable {
     case all = "All"
     case done = "Done"
     case notDone = "Not Done"
-
+    
     /// Returns the appropriate filter closure based on the status.
     func filter(_ items: [ToDoItem]) -> [ToDoItem] {
         switch self {

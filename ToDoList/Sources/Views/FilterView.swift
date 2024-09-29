@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FilterView: View {
     @Binding var filterIndex: Status
-
+    
     var body: some View {
         Picker("Filter", selection: $filterIndex) {
             ForEach(Status.allCases, id: \.self) { status in
