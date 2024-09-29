@@ -29,37 +29,38 @@ final class ToDoListViewModelTests: XCTestCase {
     func testAddTodoItem() {
         // Given
         let item = ToDoItem(title: "Test Task")
-        
+        XCTAssertTrue(viewModel.filteredToDoItems.isEmpty)
         // When
         viewModel.add(item: item)
         
         // Then
-        XCTAssertEqual(viewModel.toDoItems.count, 1)
-        XCTAssertTrue(viewModel.toDoItems[0].title == "Test Task")
+        XCTAssertEqual(viewModel.filteredToDoItems.count, 1)
+        XCTAssertTrue(viewModel.filteredToDoItems[0].title == "Test Task")
     }
     
     func testToggleTodoItemCompletion() {
         // Given
         let item = ToDoItem(title: "Test Task")
         viewModel.add(item: item)
-        
+        XCTAssertFalse(viewModel.filteredToDoItems[0].isDone)
         // When
         viewModel.toggleTodoItemCompletion(item)
         
         // Then
-        XCTAssertTrue(viewModel.toDoItems[0].isDone)
+        XCTAssertTrue(viewModel.filteredToDoItems[0].isDone)
     }
     
     func testRemoveTodoItem() {
         // Given
         let item = ToDoItem(title: "Test Task")
-        viewModel.toDoItems.append(item)
+        viewModel.add(item: item)
         
+        XCTAssertEqual(viewModel.filteredToDoItems, [item])
         // When
         viewModel.removeTodoItem(item)
         
         // Then
-        XCTAssertTrue(viewModel.toDoItems.isEmpty)
+        XCTAssertTrue(viewModel.filteredToDoItems.isEmpty)
     }
     
     func testFilteredToDoItems() {
@@ -70,18 +71,34 @@ final class ToDoListViewModelTests: XCTestCase {
         viewModel.add(item: item2)
         
         // When
-        viewModel.applyFilter(at: 0)
+        viewModel.filterIndex = .all
+        viewModel.applyFilter()
         // Then
-        XCTAssertEqual(viewModel.toDoItems.count, 2)
+        XCTAssertEqual(viewModel.filteredToDoItems, [item1, item2])
         
         // When
-        viewModel.applyFilter(at: 1)
+        viewModel.filterIndex = .done
+        viewModel.applyFilter()
         // Then
-        XCTAssertEqual(viewModel.toDoItems.count, 1)
+        XCTAssertEqual(viewModel.filteredToDoItems, [item1])
         
         // When
-        viewModel.applyFilter(at: 2)
+        viewModel.filterIndex = .notDone
+        viewModel.applyFilter()
         // Then
-        XCTAssertEqual(viewModel.toDoItems.count, 1)
+        XCTAssertEqual(viewModel.filteredToDoItems, [item2])
+    }
+
+    func testAddDuplicateTodoItem() {
+        // Given
+        let item1 = ToDoItem(title: "Test Task")
+        let item2 = ToDoItem(title: "Test Task") // same title
+        viewModel.add(item: item1)
+        
+        // When
+        viewModel.add(item: item2)
+        
+        // Then
+        XCTAssertEqual(viewModel.filteredToDoItems.count, 2)
     }
 }
